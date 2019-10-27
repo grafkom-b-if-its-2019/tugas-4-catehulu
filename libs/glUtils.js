@@ -1,80 +1,82 @@
 (function(global){
 
   var glUtils = {
-    VERSION : '0.0.4',
+    VERSION: '0.0.4',
     checkWebGL: function(canvas) {
-      /**
-       * Check if WebGL is available.
-       **/
-      var contexts = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"], gl;
-      for (var i=0; i < contexts.length; i++) {
+      var contexts = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+      var gl;
+      for (var i = 0; i < contexts.length; i++) {
         try {
-          gl = canvas.getContext(contexts[i]);
-        } catch(e) {}
+          var context = contexts[i];
+          gl = canvas.getContext(context);
+        } catch (error) {
+          // Sementara kosong
+        }
         if (gl) {
           break;
         }
       }
       if (!gl) {
-        alert("WebGL not available, sorry! Please use a new version of Chrome or Firefox.");
+        alert("WebGL tidak ditemukan. Tolong gunakan versi terbaru Chrome atau Firefox.");
       }
       return gl;
     },
+    getShader: function(gl, type, source) {
+      var shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
 
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.log("Shader gagal dikompilasi: " + gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+
+      return shader;
+    },
     createProgram: function(gl, vertexShader, fragmentShader) {
-      /**
-       * Create and return a shader program
-       **/
       var program = gl.createProgram();
       gl.attachShader(program, vertexShader);
       gl.attachShader(program, fragmentShader);
       gl.linkProgram(program);
 
-      // Check that shader program was able to link to WebGL
+      // Cek apakah link-nya berhasil
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         var error = gl.getProgramInfoLog(program);
-        console.log('Failed to link program: ' + error);
+        console.log('Gagal link: ' + error);
         gl.deleteProgram(program);
-        gl.deleteShader(fragmentShader);
         gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
         return null;
       }
-      //gl.useProgram(program);
+
+      gl.validateProgram(program);
+      if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
+        var error = gl.getProgramInfoLog(program);
+        console.log('Gagal validasi: ' + error);
+        gl.deleteProgram(program);
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+        return null;
+      }
+
       return program;
     },
-
-    getShader: function(gl,type,source) {
-      /**
-       * Get, compile, and return an embedded shader object
-       **/
-      var shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-
-      // Check if compiled successfully
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.log("An error occurred compiling the shaders:" + gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
-      return shader;
-    },
-
     SL: {
-      sourceFromHtml: function(opts) {
-        var opts = opts || {};
-        this.elemName = opts.elemName || "shader";
-        this.dataType = opts.dataType || "data-type";
-        this.dataVersion = opts.dataVersion || "data-version";
+      sourceFromHtml: function(options) {
+        var options = options || {};
+        this.elemName = options.elemName || "shader";
+        this.dataType = options.dataType || "data-type";
+        this.dataVersion = options.dataVersion || "data-version";
         this.shaderElems = document.getElementsByName(this.elemName);
         this.Shaders = this.Shaders || {};
         this.slShaderCount = this.shaderElems.length;
-        for(var i = 0; i < this.slShaderCount; i++) {
+        for (var i = 0; i < this.slShaderCount; i++) {
           var shader = this.shaderElems[i];
           if (!shader) {
             return null;
           }
-
+          
           var source = "";
           var currentChild = shader.firstChild;
           while (currentChild) {
@@ -85,7 +87,7 @@
           }
 
           var version = shader.getAttribute(this.dataVersion);
-          if(!this.Shaders[version]) {
+          if (!this.Shaders[version]) {
             this.Shaders[version] = {
               vertex: '',
               fragment: ''
@@ -98,31 +100,34 @@
        * Ajax stuff
        */
       XMLHttpFactories: [
-        function () {return new XMLHttpRequest()},
-        function () {return new ActiveXObject("Msxml2.XMLHTTP")},
-        function () {return new ActiveXObject("Msxml3.XMLHTTP")},
-        function () {return new ActiveXObject("Microsoft.XMLHTTP")}
+        function () { return new XMLHttpRequest() },
+        function () { return new ActiveXObject("Msxml2.XMLHTTP") },
+        function () { return new ActiveXObject("Msxml3.XMLHTTP") },
+        function () { return new ActiveXObject("Microsoft.XMLHTTP") }
       ],
       createXMLHTTPObject: function() {
         var xmlhttp = false;
-        for (var i=0;i< this.XMLHttpFactories.length;i++) {
-          try { xmlhttp = this.XMLHttpFactories[i](); }
-          catch (e) { continue; }
+        for (var i = 0; i < this.XMLHttpFactories.length; i++) {
+          try {
+            xmlhttp = this.XMLHttpFactories[i]();
+          } catch (error) {
+            continue;
+          }
           break;
         }
         return xmlhttp;
       },
-      sendRequest: function(url,callback,element) {
+      sendRequest: function(url, callback, element) {
         var req = this.createXMLHTTPObject();
         if (!req) return;
         var method = "GET";
-        req.open(method,url,true);
-        req.onreadystatechange = function () {
+        req.open(method, url, true);
+        req.onreadystatechange = function() {
           if (req.readyState != 4) return;
           if (req.status != 0 && req.status != 200 && req.status != 304) {
             return;
           }
-          callback(req,element);
+          callback(req, element);
         }
         if (req.readyState == 4) return;
         req.send();
@@ -130,13 +135,13 @@
       /*
        * Signals
        */
-      init: function(opts) {
-        var opts = opts || {};
-        this.callback = opts.callback || function() {};
-        this.elemName = opts.elemName || "shader";
-        this.dataSrc = opts.dataSrc || "data-src";
-        this.dataType = opts.dataType || "data-type";
-        this.dataVersion = opts.dataVersion || "data-version";
+      init: function(options) {
+        var options = options || {};
+        this.callback = options.callback || function() {};
+        this.elemName = options.elemName || "shader";
+        this.dataSrc = options.dataSrc || "data-src";
+        this.dataType = options.dataType || "data-type";
+        this.dataVersion = options.dataVersion || "data-version";
         this.shaderElems = document.getElementsByName(this.elemName);
         this.loadedSignal = new global.signals.Signal();
         this.Shaders = this.Shaders || {};
@@ -153,7 +158,7 @@
           this.loadedSignal.dispatch();
         }
       },
-      processShader: function(req,element) {
+      processShader: function(req, element) {
         glUtils.SL.slShaderCount--;
         var version = element.getAttribute(glUtils.SL.dataVersion);
         if(!glUtils.SL.Shaders[version]) {
@@ -168,7 +173,6 @@
     }
   };
 
-  // Expose glUtils globally
   global.glUtils = glUtils;
 
-}(window || this));
+})(window || this);
