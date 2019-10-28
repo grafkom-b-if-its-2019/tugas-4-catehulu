@@ -178,7 +178,7 @@
     // console.log(pm);
 
     glMatrix.mat4.lookAt(vm,
-      glMatrix.vec3.fromValues(0.0, 0.0, -0.5),    // posisi kamera
+      glMatrix.vec3.fromValues(0.9, 0.0, -0.5),    // posisi kamera
       glMatrix.vec3.fromValues(0.0, 0.0, -2.0),  // titik yang dilihat; pusat kubus akan kita pindah ke z=-2
       glMatrix.vec3.fromValues(0.0, 1.0, 0.0)   // arah atas dari kamera
     );
@@ -200,24 +200,36 @@
     var vPosition = gl.getAttribLocation(program, 'vPosition');
     var vColor = gl.getAttribLocation(program, 'vColor');
 
-    function onKeyPress(event) {
-      if (event.keyCode == 83 || event.keyCode == 115) {
-        rotAdder = 0.0;
-      } else if (event.keyCode == 80 || event.keyCode == 112) {
-        rotAdder = 0.5;
-      }
+    // function onKeyPress(event) {
+    //   if (event.keyCode == 83 || event.keyCode == 115) {
+    //     rotAdder = 0.0;
+    //   } else if (event.keyCode == 80 || event.keyCode == 112) {
+    //     rotAdder = 0.5;
+    //   }
 
-      if (event.keyCode == 88 || event.keyCode == 120) {
-        axis = xAxis;
-      } else if (event.keyCode == 89 || event.keyCode == 121) {
-        axis = yAxis;
-      } else if (event.keyCode == 90 || event.keyCode == 122) {
-        axis = zAxis;
-      }
-    }
-    document.addEventListener('keypress', onKeyPress);
+    //   if (event.keyCode == 88 || event.keyCode == 120) {
+    //     if (event.keyCode == 88 ) {
+    //       xAdders += 0.001
+    //     } else {
+    //       xAdders -= 0.001
+    //     }
+    //   } else if (event.keyCode == 89 || event.keyCode == 121) {
+    //     if (event.keyCode == 89 ) {
+    //       yAdders += 0.001
+    //     } else {
+    //       yAdders -= 0.001
+    //     }
+    //   } else if (event.keyCode == 90 || event.keyCode == 122) {
+    //     if (event.keyCode == 90 ) {
+    //       zAdders += 0.001
+    //     } else {
+    //       zAdders -= 0.001
+    //     }
+    //   }
+    // }
+    // document.addEventListener('keypress', onKeyPress);
 
-    theta[axis] += rotAdder;  // dalam derajat
+    // theta[axis] += rotAdder;  // dalam derajat
 
     if (mode) {
         var scaleLocation = gl.getUniformLocation(program, 'scale');
