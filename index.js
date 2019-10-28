@@ -9,10 +9,17 @@
   var scale = 0;
   var adder = 0.0088;
 
-  var xAdders = 0.05;
-  var yAdders = 0.02;
-  var zAdders = 0.03;
+  var xAdders = 0.04;
+  var yAdders = 0.03;
+  var zAdders = 0.02;
   var translate = [0.0, 0.0, 0.0];
+  var rotAdder = 0.5;
+
+  var theta = [0.0, 0.0, 0.0];
+  var axis = 0;
+  var xAxis = 0;
+  var yAxis = 1;
+  var zAxis = 2;
 
   function initShaders() {
     var vertexShader = glUtils.getShader(gl, gl.VERTEX_SHADER, glUtils.SL.Shaders.v1.vertex),
@@ -163,9 +170,55 @@
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
+    // Definisi view dan projection
+    var vmLoc = gl.getUniformLocation(program, 'view');
+    var pmLoc = gl.getUniformLocation(program, 'projection');
+    var vm = glMatrix.mat4.create();
+    var pm = glMatrix.mat4.create();
+    // console.log(pm);
+
+    glMatrix.mat4.lookAt(vm,
+      glMatrix.vec3.fromValues(0.0, 0.0, -0.5),    // posisi kamera
+      glMatrix.vec3.fromValues(0.0, 0.0, -2.0),  // titik yang dilihat; pusat kubus akan kita pindah ke z=-2
+      glMatrix.vec3.fromValues(0.0, 1.0, 0.0)   // arah atas dari kamera
+    );
+
+    var fovy = glMatrix.glMatrix.toRadian(90.0);
+    var aspect = canvas.width / canvas.height;
+    var near = 0.5;
+    var far = 10.0;
+    glMatrix.mat4.perspective(pm,
+      fovy,
+      aspect,
+      near,
+      far
+    );
+
+    gl.uniformMatrix4fv(vmLoc, false, vm);
+    gl.uniformMatrix4fv(pmLoc, false, pm);
+
     var vPosition = gl.getAttribLocation(program, 'vPosition');
     var vColor = gl.getAttribLocation(program, 'vColor');
-    
+
+    function onKeyPress(event) {
+      if (event.keyCode == 83 || event.keyCode == 115) {
+        rotAdder = 0.0;
+      } else if (event.keyCode == 80 || event.keyCode == 112) {
+        rotAdder = 0.5;
+      }
+
+      if (event.keyCode == 88 || event.keyCode == 120) {
+        axis = xAxis;
+      } else if (event.keyCode == 89 || event.keyCode == 121) {
+        axis = yAxis;
+      } else if (event.keyCode == 90 || event.keyCode == 122) {
+        axis = zAxis;
+      }
+    }
+    document.addEventListener('keypress', onKeyPress);
+
+    theta[axis] += rotAdder;  // dalam derajat
+
     if (mode) {
         var scaleLocation = gl.getUniformLocation(program, 'scale');
         gl.uniform1f(scaleLocation, scale);
@@ -175,6 +228,7 @@
         else if (scale < -1){
           adder = 0.0088
         }
+
         scale += adder;
         // console.log(scale);
         
@@ -225,7 +279,6 @@
         gl.uniform3fv(translationLoc, translate);
 
         var thetaLoc = gl.getUniformLocation(program, 'theta');
-        var theta = [-20.0, 40.0, 0.0];
 
         gl.uniform3fv(thetaLoc, theta);
     } else{
@@ -242,7 +295,6 @@
           6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 
         var thetaLoc = gl.getUniformLocation(program, 'theta');
-        var theta = [-20.0, 40.0, 0.0];
 
         gl.uniform3fv(thetaLoc, theta);
 

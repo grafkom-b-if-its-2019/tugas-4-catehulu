@@ -7,10 +7,20 @@ uniform vec3 theta;
 uniform float scale;
 uniform vec3 translate;
 uniform float middle_coorinates;
+uniform mat4 projection;
+uniform mat4 view;
 
 void main() {
   fColor = vColor;
   gl_Position = vec4(vPosition, 0.0, 1.0);
+
+  mat4 translasi_perspektif = mat4(
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, -2.0, 1.0         // Kita geser setiap verteks sejau 2 unit menjauhi kamera, untuk memastikan seluruh bagian kubus ada di antara near dan far.
+  );
+
   mat4 translasi = mat4(
       1, 0, 0, translate.x,
       0, 1, 0, translate.y,
@@ -44,9 +54,9 @@ void main() {
     0.0, 0.0, 0.0, 1.0
   );
 
-  vec4 rotated_position =  rx * ry * rz * vec4(vPosition, 0.0, 1.0);
+  vec4 rotated_position = vec4(vPosition, 0.0, 1.0);
   vec4 middle_x = vec4(middle_coorinates, 0, 0, 1.0);
-  vec4 middle_vector =   rx * ry * rz * middle_x;
+  vec4 middle_vector = middle_x;
 
   mat4 Skalasi = mat4(
       0.2       , 0             , 0, 0,
@@ -61,5 +71,6 @@ void main() {
       0           , 0             , 1, 0,
       0           , 0             , 0, 1
   );
-  gl_Position = rotated_position * translasi * pseudo_rotate * Skalasi;
+  vec4 final_position = rotated_position * translasi * pseudo_rotate * Skalasi;
+  gl_Position = projection * view * translasi_perspektif * final_position;
 }
