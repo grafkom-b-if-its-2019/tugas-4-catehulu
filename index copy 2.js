@@ -6,21 +6,9 @@
   var canvas = document.getElementById("glcanvas");
   var gl = glUtils.checkWebGL(canvas);
 
-  var scale = 0;
-  var adder = 0.0088;
+  var current_middle = [0.35, -0.2, 0];
 
-  var testerA = 0;
-  var testerB = 0;
-  var testerC = 0;
-
-  var xAdders = 0.04/2;
-  var yAdders = 0.03/2;
-  var zAdders = 0.02/2;
-  var translate = [0, 0, 0];
-
-  var current_middle = [0.4, -0.2, 0];
-
-  var theta = [180.0, 180.0, 180.0];
+  var theta = [0.0, 0.0, 0.0];
   var axis = 0;
   var xAxis = 0;
   var yAxis = 1;
@@ -90,26 +78,26 @@
     ];
 
     var triangleVertices = new Float32Array([
-      -0.15, -0.4,   1,1,1, //1  
-      -0.15, +0.4,   1,1,1, //2
-      -0.05, -0.4,   1,1,1, //3
-      -0.05, +0.4,   1,1,1, //3
-      -0.05, -0.0,   1,1,1, //11
-      +0.00, +0.2,   1,1,1, //4 titik tengah
-      +0.00, -0.2,   1,1,1, //10 titik tengah
-      +0.00, +0.2,   1,1,1, //4 titik tengah
-      +0.05, -0.0,   1,1,1,//9
-      +0.05, +0.4,   1,1,1,//5
-      +0.15, +0.4,   1,1,1,//6
-      +0.15, -0.4,   1,1,1,//7
-      +0.05, -0.4,   1,1,1,//8
-      +0.05, +0.4,   1,1,1,//5 
+      +0.2, -0.5,   1,1,1, //1  
+      +0.2, +0.5,   1,1,1, //2
+      +0.3, -0.5,   1,1,1, //3
+      +0.3, +0.5,   1,1,1, //3
+      +0.3, -0.0,   1,1,1, //11
+      +0.35, +0.2,  1,1,1, //4 titik tengah
+      +0.35, -0.2,  1,1,1, //10 titik tengah
+      +0.35, +0.2,  1,1,1, //4 titik tengah
+      +0.4, -0.0,   1,1,1,//9
+      +0.4, +0.5,   1,1,1,//5
+      +0.5, +0.5,   1,1,1,//6
+      +0.5, -0.5,   1,1,1,//7
+      +0.4, -0.5,   1,1,1,//8
+      +0.4, +0.5,   1,1,1,//5 
     ]);
     
     function render() {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       
-      drawA(gl.TRIANGLE_STRIP, triangleVertices, 1, shaders[1]);
+      // drawA(gl.TRIANGLE_STRIP, triangleVertices, 1, shaders[1]);
       drawA(gl.TRIANGLES, cubeVertices, 0, shaders[0]);
     
       requestAnimationFrame(render);
@@ -117,7 +105,6 @@
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
-    // gl.frontFace(gl.CW);
     render();
 
     function drawA(type, vertices, mode, program) {
@@ -184,8 +171,8 @@
       var lightColorLoc = gl.getUniformLocation(program, 'lightColor');
       var lightPositionLoc = gl.getUniformLocation(program, 'lightPosition');
       var ambientColorLoc = gl.getUniformLocation(program, 'ambientColor');
-      var lightColor = [1, 1, 1];
-      var lightPosition = [translate[0], translate[1], -2 + translate[2]];
+      var lightColor = [0.5, 0.5, 0.5];
+      var lightPosition = current_middle;
       var ambientColor = glMatrix.vec3.fromValues(0.2, 0.2, 0.2);
       gl.uniform3fv(lightColorLoc, lightColor);
       gl.uniform3fv(lightPositionLoc, lightPosition);
@@ -224,32 +211,30 @@
         );
 
         //Translasi X
-        if (translate[0] + 0.15 > 0.5 || translate[0] - 0.15 < -0.5 ) {
+        if (translate[0] + 0.5 + xAdders > 0.5*5 || translate[0] + 0.2 + xAdders < -0.5*5 ) {
           xAdders *= -1;
         }
         translate[0] += xAdders;
-        // console.log(translate[0] + xAdders);
 
         current_middle += translate[0];
 
         //Translasi Y
-        if (translate[1] + 0.2 > 0.5 || translate[1] - 0.2 < -0.5 ) {
+        if (translate[1] + 0.5 + yAdders> 0.5*5 || translate[1] + -0.5 + yAdders < -0.5*5 ) {
           yAdders *= -1;
         }
         translate[1] += yAdders;
 
         //Translasi Z
-        if (translate[2] > 0.5 || translate[2] < -0.5 ) {
+        if (translate[2] + zAdders > 0.5*0.5 || translate[2] + zAdders < -0.5*0.5 ) {
           zAdders *= -1;
         }
         translate[2] += zAdders;
 
         var mm = glMatrix.mat4.create();
         glMatrix.mat4.translate(mm, mm, [0.0, 0.0, -2.0]);
-        // console.log(translate);
         glMatrix.mat4.translate(mm, mm, translate);
-        glMatrix.mat4.scale(mm, mm, [0.2, 0.2, 0.2]);
-        glMatrix.mat4.scale(mm, mm, [scale, 1.0, 1.0]);
+        glMatrix.mat4.scale(mm,[0.5, 0.5, 0.5]);
+        glMatrix.mat4.scale(mm,[scale, 1.0, 1.0]);
         // glMatrix.mat4.rotateZ(mm, mm, theta[zAxis]);
         // glMatrix.mat4.rotateY(mm, mm, theta[yAxis]);
         // glMatrix.mat4.rotateX(mm, mm, theta[xAxis]);
@@ -269,9 +254,11 @@
         );
         gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, gl.FALSE, 
           8 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+        gl.vertexAttribPointer(vNormal, 3, gl.FLOAT, gl.FALSE, 
+          8 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
         gl.enableVertexAttribArray(vTexCoord);
 
-        // theta[axis] += glMatrix.glMatrix.toRadian(0.5);  // dalam derajat
+        theta[axis] += glMatrix.glMatrix.toRadian(0.5);  // dalam derajat
         var mm = glMatrix.mat4.create();
         glMatrix.mat4.translate(mm, mm, [0.0, 0.0, -2.0]);
         // glMatrix.mat4.rotateZ(mm, mm, theta[zAxis]);
@@ -290,10 +277,6 @@
         gl.activeTexture(gl.TEXTURE0);
         initTexture(texture);
       }
-      
-      gl.vertexAttribPointer(vNormal, 3, gl.FLOAT, gl.FALSE, 
-        8 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-
       var nmLoc = gl.getUniformLocation(program, 'normalMatrix');
 
       // Perhitungan modelMatrix untuk vektor normal
