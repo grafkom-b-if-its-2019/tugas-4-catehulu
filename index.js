@@ -16,11 +16,11 @@
   var xAdders = 0.04/2;
   var yAdders = 0.03/2;
   var zAdders = 0.02/2;
-  var translate = [0, 0, 0];
+  var translate = [0, 0, -0.5];
 
   var current_middle = [0.4, -0.2, 0];
 
-  var theta = [180.0, 180.0, 180.0];
+  var theta = [0, 0, 0];
   var axis = 0;
   var xAxis = 0;
   var yAxis = 1;
@@ -55,36 +55,36 @@
 
        0.5,  0.5,  0.5,     0.0, 1.0,  1.0, 0.0, 0.0, // kanan, hijau, CDH CHG
        0.5, -0.5,  0.5,     0.0, 0.0,  1.0, 0.0, 0.0,
-       0.5, -0.5, -0.5,     1.0, 0.0,  1.0, 0.0, 0.0,
+       0.5, -0.5, -0.5,     0.2, 0.0,  1.0, 0.0, 0.0,
        0.5,  0.5,  0.5,     0.0, 1.0,  1.0, 0.0, 0.0,
-       0.5, -0.5, -0.5,     1.0, 0.0,  1.0, 0.0, 0.0,
-       0.5,  0.5, -0.5,     1.0, 1.0,  1.0, 0.0, 0.0,
+       0.5, -0.5, -0.5,     0.2, 0.0,  1.0, 0.0, 0.0,
+       0.5,  0.5, -0.5,     0.2, 1.0,  1.0, 0.0, 0.0,
 
-       0.5, -0.5,  0.5,     0.0, 1.0,  0.0, -1.0, 0.0, // bawah, biru, DAE DEH
-      -0.5, -0.5,  0.5,     0.0, 0.0,  0.0, -1.0, 0.0,
-      -0.5, -0.5, -0.5,     1.0, 0.0,  0.0, -1.0, 0.0,
-       0.5, -0.5,  0.5,     0.0, 1.0,  0.0, -1.0, 0.0,
-      -0.5, -0.5, -0.5,     1.0, 0.0,  0.0, -1.0, 0.0,
-       0.5, -0.5, -0.5,     1.0, 1.0,  0.0, -1.0, 0.0,
+       0.5, -0.5,  0.5,     0.2, 1.0,  0.0, -1.0, 0.0, // bawah, biru, DAE DEH
+      -0.5, -0.5,  0.5,     0.2, 0.0,  0.0, -1.0, 0.0,
+      -0.5, -0.5, -0.5,     0.4, 0.0,  0.0, -1.0, 0.0,
+       0.5, -0.5,  0.5,     0.2, 1.0,  0.0, -1.0, 0.0,
+      -0.5, -0.5, -0.5,     0.4, 0.0,  0.0, -1.0, 0.0,
+       0.5, -0.5, -0.5,     0.4, 1.0,  0.0, -1.0, 0.0,
 
-      -0.5, -0.5, -0.5,     0.0, 1.0,  0.0, 0.0, -1.0, // belakang, kuning, EFG EGH
-      -0.5,  0.5, -0.5,     0.0, 0.0,  0.0, 0.0, -1.0,
-       0.5,  0.5, -0.5,     1.0, 0.0,  0.0, 0.0, -1.0,
-      -0.5, -0.5, -0.5,     0.0, 1.0,  0.0, 0.0, -1.0,
-       0.5,  0.5, -0.5,     1.0, 0.0,  0.0, 0.0, -1.0,
-       0.5, -0.5, -0.5,     1.0, 1.0,  0.0, 0.0, -1.0,
+      -0.5, -0.5, -0.5,     0.4, 1.0,  0.0, 0.0, -1.0, // belakang, kuning, EFG EGH
+      -0.5,  0.5, -0.5,     0.4, 0.0,  0.0, 0.0, -1.0,
+       0.5,  0.5, -0.5,     0.6, 0.0,  0.0, 0.0, -1.0,
+      -0.5, -0.5, -0.5,     0.4, 1.0,  0.0, 0.0, -1.0,
+       0.5,  0.5, -0.5,     0.6, 0.0,  0.0, 0.0, -1.0,
+       0.5, -0.5, -0.5,     0.6, 1.0,  0.0, 0.0, -1.0,
 
-      -0.5,  0.5, -0.5,     0.0, 1.0,  -1.0, 0.0, 0.0, // kiri, cyan, FEA FAB
-      -0.5, -0.5, -0.5,     0.0, 0.0,  -1.0, 0.0, 0.0,
-      -0.5, -0.5,  0.5,     1.0, 0.0,  -1.0, 0.0, 0.0,
-      -0.5,  0.5, -0.5,     0.0, 1.0,  -1.0, 0.0, 0.0,
-      -0.5, -0.5,  0.5,     1.0, 0.0,  -1.0, 0.0, 0.0,
-      -0.5,  0.5,  0.5,     1.0, 1.0,  -1.0, 0.0, 0.0,
+      -0.5,  0.5, -0.5,     0.6, 1.0,  -1.0, 0.0, 0.0, // kiri, cyan, FEA FAB
+      -0.5, -0.5, -0.5,     0.6, 0.0,  -1.0, 0.0, 0.0,
+      -0.5, -0.5,  0.5,     0.8, 0.0,  -1.0, 0.0, 0.0,
+      -0.5,  0.5, -0.5,     0.6, 1.0,  -1.0, 0.0, 0.0,
+      -0.5, -0.5,  0.5,     0.8, 0.0,  -1.0, 0.0, 0.0,
+      -0.5,  0.5,  0.5,     0.8, 1.0,  -1.0, 0.0, 0.0,
 
-       0.5,  0.5, -0.5,     0.0, 1.0,  0.0, 1.0, 0.0, // atas, magenta, GFB GBC
-      -0.5,  0.5, -0.5,     0.0, 0.0,  0.0, 1.0, 0.0,
+       0.5,  0.5, -0.5,     0.8, 1.0,  0.0, 1.0, 0.0, // atas, magenta, GFB GBC
+      -0.5,  0.5, -0.5,     0.8, 0.0,  0.0, 1.0, 0.0,
       -0.5,  0.5,  0.5,     1.0, 0.0,  0.0, 1.0, 0.0,
-       0.5,  0.5, -0.5,     0.0, 1.0,  0.0, 1.0, 0.0,
+       0.5,  0.5, -0.5,     0.8, 1.0,  0.0, 1.0, 0.0,
       -0.5,  0.5,  0.5,     1.0, 0.0,  0.0, 1.0, 0.0,
        0.5,  0.5,  0.5,     1.0, 1.0,  0.0, 1.0, 0.0
     ];
@@ -129,6 +129,41 @@
       }
       gl.drawArrays(type, 0, n);
     }
+
+    
+    var lastX, lastY, dragging;
+    function onMouseDown(event) {
+      var x = event.clientX;
+      var y = event.clientY;
+      var rect = event.target.getBoundingClientRect();
+      if (rect.left <= x &&
+          rect.right > x &&
+          rect.top <= y &&
+          rect.bottom > y) {
+            lastX = x;
+            lastY = y;
+            dragging = true;
+      }
+    }
+    function onMouseUp(event) {
+      dragging = false;
+    }
+    function onMouseMove(event) {
+      var x = event.clientX;
+      var y = event.clientY;
+      if (dragging) {
+        var factor = 10 / canvas.height;
+        var dx = factor * (x - lastX);
+        var dy = factor * (y - lastY);
+        theta[yAxis] += dx;
+        theta[xAxis] += dy;
+      }
+      lastX = x;
+      lastY = y;
+    }
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
 
     function initBuffers(mode, vertices, program) {
       var n;
@@ -301,6 +336,16 @@
       glMatrix.mat3.normalFromMat4(nm, mm);
       gl.uniformMatrix3fv(nmLoc, false, nm);
 
+      //Rotation Matrix
+      var mvpLoc = gl.getUniformLocation(program, 'MVPMatrix');
+      var mvp = glMatrix.mat4.create();
+      glMatrix.mat4.multiply(mvp,vm,mm);
+      glMatrix.mat4.multiply(mvp,pm,mvp);
+      glMatrix.mat4.rotateY(mvp, mvp, theta[yAxis]);
+      glMatrix.mat4.rotateX(mvp, mvp, theta[xAxis]);
+
+      gl.uniformMatrix4fv(mvpLoc, false, mvp);
+
       gl.enableVertexAttribArray(vPosition);
       gl.enableVertexAttribArray(vNormal);
       return n;
@@ -310,7 +355,7 @@
 
     // Membuat mekanisme pembacaan gambar jadi tekstur
     function initTexture(texture) {
-      var imageSource = 'images/txStainglass.bmp';
+      var imageSource = 'images/20191207_195753.jpg';
       var image = new Image();
       if (!image) {
         reject(new Error('Gagal membuat objek gambar'));
