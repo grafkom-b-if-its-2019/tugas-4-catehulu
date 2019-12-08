@@ -221,7 +221,7 @@
       var ambientColorLoc = gl.getUniformLocation(program, 'ambientColor');
       var lightColor = [1, 1, 1];
       var lightPosition = [translate[0], translate[1], -2 + translate[2]];
-      var ambientColor = glMatrix.vec3.fromValues(0.2, 0.2, 0.2);
+      var ambientColor = glMatrix.vec3.fromValues(0.15, 0.00, 0.88);
       gl.uniform3fv(lightColorLoc, lightColor);
       gl.uniform3fv(lightPositionLoc, lightPosition);
       gl.uniform3fv(ambientColorLoc, ambientColor);
